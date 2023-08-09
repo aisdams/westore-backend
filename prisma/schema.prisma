@@ -1,0 +1,58 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+  previewFeatures = ["extendedWhereUnique"]
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model FasilitasHotel {
+  fasilitas_hotel_code String @id @default(uuid())
+  nama_hotel String
+  alamat String? @db.Text
+  keterangan String? @db.Text
+  photo String?
+  createdAt              DateTime                 @default(now())
+  updatedAt              DateTime                 @updatedAt
+  deletedAt              DateTime?
+
+  // FasilitasKamarDetail FasilitasKamarDetail[]
+  @@map(name: "fasilitas_hotel")
+}
+
+model FasilitasKamar {
+  fasilitas_kamar_code String @id @default(uuid())
+  tipe_kamar String
+  fasilitas_kamar String @db.VarChar(255)
+  jumlah_kamar_tersedia String
+  jumlah_kamar_tekterpakai String
+  jumlah_pinjam String
+
+  tarif String @db.VarChar(255)
+
+  createdAt          DateTime             @default(now())
+  updatedAt          DateTime             @updatedAt
+  deletedAt          DateTime?
+  FasilitasKamarDetail FasilitasKamarDetail[]
+
+  @@map(name: "fasilitas_kamar")
+}
+
+model FasilitasKamarDetail {
+   fasilitas_kamar_detail_code String @id @default(uuid())
+   fasilitas_kamar      FasilitasKamar @relation(fields: [fasilitas_kamar_code], references: [fasilitas_kamar_code])
+   fasilitas_kamar_code String           @db.VarChar(255)
+
+  // fasilitas_hotel      FasilitasHotel @relation(fields: [fasilitas_hotel_code], references: [fasilitas_hotel_code])
+  // fasilitas_hotel_code String   @db.VarChar(255)
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+  @@map(name: "fasilitas_kamar_detail")
+}
